@@ -65,7 +65,7 @@ Deben aparecer las secciones Client y Server.
 Abrir una terminal en la carpeta que contiene el Dockerfile y ejecutar:
 
 ```powershell
-docker build -t clasificador-mlops:1.0 .
+docker build -t clasificador-mlops:2.0 .
 ```
 
 El punto final indica que Docker debe utilizar la carpeta actual.
@@ -73,7 +73,7 @@ El punto final indica que Docker debe utilizar la carpeta actual.
 ## Ejecutar el contenedor
 
 ```powershell
-docker run --rm -p 127.0.0.1:5001:5000 clasificador-mlops:1.0
+docker run --rm -p 127.0.0.1:5001:5000 --mount type=volume,source=mlops-u2-datos,target=/app/datos clasificador-mlops:2.0
 ```
 
 Mantener la terminal abierta y acceder a:
@@ -95,8 +95,9 @@ Introducir los tres valores y pulsar Clasificar.
 | 2 | 3 | 4 | ENFERMEDAD LEVE |
 | 2 | 3 | 8 | ENFERMEDAD AGUDA |
 | 2 | 40 | 4 | ENFERMEDAD CRÓNICA |
+| 3 | 100 | 9 | ENFERMEDAD TERMINAL |
 
-Estos cuatro casos se comprobaron durante la entrega 1, tanto en la
+Estos cinco casos se comprobaron durante la entrega 1, tanto en la
 ejecución local como dentro del contenedor Docker.
 
 ## Alcance académico
@@ -104,6 +105,28 @@ ejecución local como dentro del contenedor Docker.
 Las clasificaciones se generan mediante reglas programadas para el
 ejercicio. Los datos utilizados en las pruebas son ficticios.
 
-## Autora
+## Reporte de predicciones
 
-Sandra Jimena Orozco Lagos
+Cada predicción exitosa del formulario se registra en
+datos/predicciones.csv.
+
+El reporte muestra:
+
+- Número total de predicciones por cada una de las cinco categorías.
+- Últimas cinco predicciones, comenzando por la más reciente.
+- Fecha y hora de la última predicción, expresadas en UTC.
+
+Consultar el reporte en tablas:
+http://127.0.0.1:5001/reporte
+
+Consultar el reporte en formato JSON:
+http://127.0.0.1:5001/api/reporte
+
+El volumen Docker mlops-u2-datos conserva el historial al detener
+y volver a iniciar el contenedor con el mismo comando.
+
+Se comprobó que los registros, los totales y la fecha permanecen
+después de reiniciar el contenedor.
+
+
+## Sandra Jimena Orozco Lagos

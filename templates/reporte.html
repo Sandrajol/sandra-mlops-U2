@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Reporte de predicciones</title>
+</head>
+<body>
+    <h1>Reporte de predicciones simuladas</h1>
+
+    <h2>Total por categoría</h2>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Categoría</th>
+            <th>Total</th>
+        </tr>
+        {% for categoria, total in reporte.totales_por_categoria.items() %}
+        <tr>
+            <td>{{ categoria }}</td>
+            <td>{{ total }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Última predicción</h2>
+    <p>{{ reporte.fecha_ultima or "Todavía no hay predicciones." }}</p>
+    <p>Las fechas se muestran en UTC.</p>
+
+    <h2>Últimas cinco predicciones</h2>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Fecha (UTC)</th>
+            <th>Síntomas</th>
+            <th>Días</th>
+            <th>Intensidad</th>
+            <th>Resultado</th>
+        </tr>
+        {% for registro in reporte.ultimas_cinco %}
+        <tr>
+            <td>{{ registro.fecha }}</td>
+            <td>{{ registro.cantidad_sintomas }}</td>
+            <td>{{ registro.dias_sintomas }}</td>
+            <td>{{ registro.intensidad }}</td>
+            <td>{{ registro.resultado }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">Todavía no hay predicciones.</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="/">Volver al formulario</a></p>
+</body>
+</html>
