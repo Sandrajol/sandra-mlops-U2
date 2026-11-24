@@ -9,6 +9,9 @@ def clasificar_estado(cantidad_sintomas, dias_sintomas, intensidad):
     if cantidad_sintomas == 0:
         return "NO ENFERMO"
 
+    if dias_sintomas >= 90 and intensidad >= 9:
+        return "ENFERMEDAD TERMINAL"
+
     if dias_sintomas >= 30:
         return "ENFERMEDAD CRÓNICA"
 
@@ -23,3 +26,5 @@ if __name__ == "__main__":
     print(clasificar_estado(2, 3, 4))
     print(clasificar_estado(2, 3, 8))
     print(clasificar_estado(2, 40, 4))
+    print(clasificar_estado(3, 100, 9))
+
