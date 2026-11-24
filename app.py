@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 
+from historial import guardar_prediccion, obtener_reporte
 from modelo import clasificar_estado
 
 app = Flask(__name__)
@@ -22,8 +23,20 @@ def inicio():
                 resultado = clasificar_estado(cantidad, dias, intensidad)
             except ValueError as exc:
                 error = str(exc)
+            else:
+                guardar_prediccion(cantidad, dias, intensidad, resultado)
 
     return render_template("index.html", resultado=resultado, error=error)
+
+
+@app.route("/reporte")
+def reporte():
+    return render_template("reporte.html", reporte=obtener_reporte())
+
+
+@app.route("/api/reporte")
+def reporte_json():
+    return obtener_reporte()
 
 
 if __name__ == "__main__":
