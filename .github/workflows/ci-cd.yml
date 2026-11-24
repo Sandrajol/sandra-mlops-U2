@@ -1,0 +1,96 @@
+name: CI/CD MLOps
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    name: Pruebas automatizadas
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Comentar inicio en el PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORIO: ${{ github.repository }}
+          NUMERO_PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh api --method POST \
+            "repos/$REPOSITORIO/issues/$NUMERO_PR/comments" \
+            -f body="CI/CD en acción. Ejecutando tareas ..."
+
+      - name: Descargar el código
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Preparar Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install pytest==9.2.0
+
+      - name: Ejecutar pruebas
+        run: python -m pytest tests -v
+
+      - name: Comentar éxito en el PR
+        if: success() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORIO: ${{ github.repository }}
+          NUMERO_PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh api --method POST \
+            "repos/$REPOSITORIO/issues/$NUMERO_PR/comments" \
+            -f body="CI/CD terminado con éxito."
+
+  publicar:
+    name: Construir y publicar imagen
+    needs: pruebas
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Iniciar sesión en GitHub Container Registry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "$GH_TOKEN" | docker login ghcr.io \
+            --username "$GITHUB_ACTOR" --password-stdin
+
+      - name: Construir y publicar
+        run: |
+          IMAGEN="ghcr.io/${GITHUB_REPOSITORY,,}"
+
+          docker build \
+            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            -t "$IMAGEN:latest" \
+            -t "$IMAGEN:$GITHUB_SHA" .
+
+          docker push "$IMAGEN:$GITHUB_SHA"
+          docker push "$IMAGEN:latest"
