@@ -16,7 +16,7 @@ Los nuevos requerimientos incluyen la categoría ENFERMEDAD TERMINAL y un
 reporte con el número de predicciones por categoría, las últimas cinco
 predicciones y la fecha de la última predicción.
 
-## Estado de la solución inicial
+## Estado actual de la solución
 
 La aplicación inicial recibe tres valores enteros:
 
@@ -24,15 +24,15 @@ La aplicación inicial recibe tres valores enteros:
 - Días con síntomas, mayor o igual a cero.
 - Intensidad de los síntomas, entre cero y diez.
 
-La función simulada devuelve uno de estos cuatro estados:
+La función simulada devuelve uno de estos cinco estados:
 
 - NO ENFERMO.
 - ENFERMEDAD LEVE.
 - ENFERMEDAD AGUDA.
 - ENFERMEDAD CRÓNICA.
+- ENFERMEDAD TERMINAL
 
-La quinta categoría y el reporte se incorporarán en los siguientes pasos
-de la actividad.
+La quinta categoría y el reporte de estadísticas ya estan implementados.
 
 ## Estructura de la solución inicial
 
@@ -97,8 +97,8 @@ Introducir los tres valores y pulsar Clasificar.
 | 2 | 40 | 4 | ENFERMEDAD CRÓNICA |
 | 3 | 100 | 9 | ENFERMEDAD TERMINAL |
 
-Estos cinco casos se comprobaron durante la entrega 1, tanto en la
-ejecución local como dentro del contenedor Docker.
+Los cuatro casos originales se comprobaron en la entrega 1. La categoría terminal 
+se incorporó y comprobó en la entrega 2.
 
 ## Alcance académico
 
