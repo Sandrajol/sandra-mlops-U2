@@ -45,8 +45,8 @@ La quinta categoría y el reporte de estadísticas ya estan implementados.
 | requirements.txt | Dependencias de Python. |
 | Dockerfile | Construcción y ejecución de la imagen. |
 
-Durante el desarrollo se agregarán el reporte de estadísticas, las pruebas
-automatizadas en tests/ y los workflows en .github/workflows/.
+El reporte de estadísticas, las pruebas automatizadas en tests/
+y el workflow en .github/workflows/ ya están implementados.
 
 ## Requisito para ejecutar la aplicación
 
@@ -127,6 +127,59 @@ y volver a iniciar el contenedor con el mismo comando.
 
 Se comprobó que los registros, los totales y la fecha permanecen
 después de reiniciar el contenedor.
+
+## Pruebas automatizadas
+
+Desde la carpeta del proyecto, instalar las dependencias y ejecutar:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m pip install pytest==9.2.0
+python -m pytest tests -v
+```
+
+Las tres pruebas verifican las cinco categorías, el reporte vacío
+y el registro de predicciones con sus estadísticas.
+
+Las pruebas del historial utilizan archivos temporales independientes.
+
+## Integración y entrega continuas
+
+El workflow se encuentra en .github/workflows/ci-cd.yml.
+
+En cada pull request dirigido a main:
+
+1. Publica un comentario de inicio.
+2. Ejecuta las pruebas automatizadas.
+3. Publica un comentario de éxito si las pruebas pasan.
+
+Después de incorporar cambios en main:
+
+1. Vuelve a ejecutar las pruebas.
+2. Construye la imagen Docker.
+3. Publica la imagen en GitHub Container Registry.
+
+La rama main requiere un pull request y pruebas exitosas antes del merge.
+
+## Ejecutar la imagen publicada
+
+Descargar la imagen:
+
+```powershell
+docker pull ghcr.io/sandrajol/sandra-mlops-u2:latest
+```
+
+Ejecutar con un volumen para conservar el historial:
+
+```powershell
+docker run --rm -p 127.0.0.1:5001:5000 --mount type=volume,source=mlops-u2-datos,target=/app/datos ghcr.io/sandrajol/sandra-mlops-u2:latest
+```
+
+Abrir el formulario en http://127.0.0.1:5001
+y el reporte en http://127.0.0.1:5001/reporte.
+
+La imagen también se publica con una etiqueta correspondiente
+al identificador del commit.
 
 
 ## Sandra Jimena Orozco Lagos
